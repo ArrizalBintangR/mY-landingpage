@@ -1,101 +1,151 @@
-import Image from "next/image";
+"use client";
+
+import { useEffect, useState, useRef } from "react";
+import { gsap } from "gsap";
+import { ScrollTrigger } from "gsap/ScrollTrigger";
+import Background from "../../components/background";
+import HoverNavbar from "../../components/navbar";
+import LoadingScreen from "../../components/LoadingComponent";
+
+import Main from "./Home";
+import About from "./AboutInterface";
+import TechStacks from "./TechstacksInterface";
+import Projects from "./ProjectsInterface";
+
+import { createCloudElements, setupCloudAnimations, setupSectionDetection } from "./utils/CloudAnimation";
+
+// Register GSAP plugins for smooth scrolling
+if (typeof window !== "undefined") {
+  gsap.registerPlugin(ScrollTrigger);
+}
 
 export default function Home() {
-  return (
-    <div className="grid grid-rows-[20px_1fr_20px] items-center justify-items-center min-h-screen p-8 pb-20 gap-16 sm:p-20 font-[family-name:var(--font-geist-sans)]">
-      <main className="flex flex-col gap-8 row-start-2 items-center sm:items-start">
-        <Image
-          className="dark:invert"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={180}
-          height={38}
-          priority
-        />
-        <ol className="list-inside list-decimal text-sm text-center sm:text-left font-[family-name:var(--font-geist-mono)]">
-          <li className="mb-2">
-            Get started by editing{" "}
-            <code className="bg-black/[.05] dark:bg-white/[.06] px-1 py-0.5 rounded font-semibold">
-              src/app/page.tsx
-            </code>
-            .
-          </li>
-          <li>Save and see your changes instantly.</li>
-        </ol>
+  const [mounted, setMounted] = useState(false);
+  const [assetsLoaded, setAssetsLoaded] = useState(false);
+  const cloudRefs = useRef([]);
+  const cloudContainerRef = useRef(null);
 
-        <div className="flex gap-4 items-center flex-col sm:flex-row">
-          <a
-            className="rounded-full border border-solid border-transparent transition-colors flex items-center justify-center bg-foreground text-background gap-2 hover:bg-[#383838] dark:hover:bg-[#ccc] text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className="dark:invert"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={20}
-              height={20}
-            />
-            Deploy now
-          </a>
-          <a
-            className="rounded-full border border-solid border-black/[.08] dark:border-white/[.145] transition-colors flex items-center justify-center hover:bg-[#f2f2f2] dark:hover:bg-[#1a1a1a] hover:border-transparent text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5 sm:min-w-44"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Read our docs
-          </a>
+  // Handle loading completion
+  const handleLoadingComplete = () => {
+    setAssetsLoaded(true);
+  };
+
+  // Create cloud elements
+  useEffect(() => {
+    if (!mounted || !assetsLoaded || typeof window === 'undefined') return;
+
+    const { cloudContainer, cloudRefs: clouds } = createCloudElements();
+    cloudContainerRef.current = cloudContainer;
+    cloudRefs.current = clouds;
+
+    return () => {
+      if (cloudContainer) {
+        cloudContainer.style.zIndex = '10';
+        if (cloudContainerRef.current && document.body.contains(cloudContainerRef.current)) {
+          document.body.removeChild(cloudContainerRef.current);
+        }
+      }
+      cloudRefs.current = [];
+    };
+  }, [mounted, assetsLoaded]);
+
+  // Setup cloud animations
+  useEffect(() => {
+    if (!mounted || !assetsLoaded || typeof window === 'undefined' || cloudRefs.current.length === 0) return;
+
+    // Add a small delay to ensure sections are properly rendered
+    const setupTimer = setTimeout(() => {
+      console.log("Setting up cloud animations with", cloudRefs.current.length, "clouds");
+      const cleanup = setupCloudAnimations(cloudRefs.current);
+      return cleanup;
+    }, 500);
+
+    return () => {
+      clearTimeout(setupTimer);
+    };
+  }, [mounted, assetsLoaded]);
+
+  useEffect(() => {
+    setMounted(true);
+
+    // Set up section detection after assets are loaded
+    if (typeof window !== 'undefined' && assetsLoaded) {
+      // Clean up any existing ScrollTriggers
+      ScrollTrigger.getAll().forEach(trigger => {
+        if (trigger.vars.id && trigger.vars.id.startsWith('section-detection')) {
+          trigger.kill();
+        }
+      });
+
+      // Set up section detection with direct navbar update
+      const cleanup = setupSectionDetection((sectionId) => {
+        console.log(`Detected active section: ${sectionId}`);
+
+        // Update URL hash without scrolling (for bookmarking)
+        if (history.pushState && window.location.hash !== `#${sectionId}`) {
+          history.pushState(null, '', `#${sectionId}`);
+        }
+
+        // Directly update the navbar via a simple custom event
+        window.dispatchEvent(new CustomEvent('activeSection', {
+          detail: sectionId
+        }));
+      });
+
+      return cleanup;
+    }
+  }, [mounted, assetsLoaded]);
+
+  // Prevent scrolling during loading
+  useEffect(() => {
+    if (!assetsLoaded) {
+      document.body.style.overflow = 'hidden';
+    } else {
+      document.body.style.overflow = '';
+    }
+
+    return () => {
+      document.body.style.overflow = '';
+    };
+  }, [assetsLoaded]);
+
+  return (
+    <>
+      <LoadingScreen onComplete={handleLoadingComplete} />
+
+      <div className={`relative overflow-x-hidden transition-opacity duration-500 ${!assetsLoaded ? 'opacity-0' : 'opacity-100'}`}>
+        <HoverNavbar />
+        {/* Fixed background with continuous gradient */}
+        <div className="absolute inset-0 w-full h-full z-0 bg-gradient-to-b from-[#50B8E7] via-[#B9E2F5] to-[#EDF7FC]">
+          <Background
+            className="absolute inset-0 opacity-20 w-full h-full object-cover"
+            style={{ mixBlendMode: "color-burn" }}
+          />
         </div>
-      </main>
-      <footer className="row-start-3 flex gap-6 flex-wrap items-center justify-center">
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/file.svg"
-            alt="File icon"
-            width={16}
-            height={16}
-          />
-          Learn
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/window.svg"
-            alt="Window icon"
-            width={16}
-            height={16}
-          />
-          Examples
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/globe.svg"
-            alt="Globe icon"
-            width={16}
-            height={16}
-          />
-          Go to nextjs.org →
-        </a>
-      </footer>
-    </div>
+
+        {/* Content sections */}
+        <div className="relative z-10">
+          {/* Home Section */}
+          <section id="home" className="section relative h-screen mb-[35rem]">
+            <Main />
+          </section>
+
+          {/* About Section */}
+          <section id="about" className="section relative min-h-screen mb-96">
+            <About />
+          </section>
+
+          {/* Tech Stacks Section */}
+          <section id="techstacks" className="section relative min-h-screen mb-[45rem]">
+            <TechStacks />
+          </section>
+
+          {/* Projects Section */}
+          <section id="projects" className="section relative min-h-screen">
+            <Projects />
+          </section>
+        </div>
+      </div>
+    </>
   );
 }
