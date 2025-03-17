@@ -22,8 +22,9 @@ if (typeof window !== "undefined") {
 export default function Home() {
   const [mounted, setMounted] = useState(false);
   const [assetsLoaded, setAssetsLoaded] = useState(false);
-  const cloudRefs = useRef([]);
-  const cloudContainerRef = useRef(null);
+  const cloudRefs = useRef<HTMLDivElement[]>([]);
+  const cloudContainerRef = useRef<HTMLDivElement | null>(null);
+  
 
   // Handle loading completion
   const handleLoadingComplete = () => {
@@ -35,8 +36,8 @@ export default function Home() {
     if (!mounted || !assetsLoaded || typeof window === 'undefined') return;
 
     const { cloudContainer, cloudRefs: clouds } = createCloudElements();
-    cloudContainerRef.current = cloudContainer;
-    cloudRefs.current = clouds;
+    cloudContainerRef.current = cloudContainer as HTMLDivElement;
+    cloudRefs.current = clouds as HTMLDivElement[];
 
     return () => {
       if (cloudContainer) {
