@@ -97,8 +97,11 @@ const LoadingScreen = ({ onComplete }) => {
   }, [onComplete]);
 
   return (
-    <div className={`fixed inset-0 z-50 flex flex-col items-center justify-center bg-[#50B8E7] transition-opacity duration-500 ${isComplete ? 'opacity-0 pointer-events-none' : 'opacity-100'}`}>
-      <div className="w-32 h-32 mb-8 relative animate-bounce">
+    <div 
+  className={`fixed inset-0 z-50 flex flex-col items-center justify-center transition-opacity duration-500 ${isComplete ? 'opacity-0 pointer-events-none' : 'opacity-100'}`}
+  style={{ backgroundColor: '#50B8E7' }}
+>
+      <div className="w-32 h-32 mb-8 relative animate-custom-bounce">
         <Image 
           src="/cloud4.webp" 
           alt="Loading"
