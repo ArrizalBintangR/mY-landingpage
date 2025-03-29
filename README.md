@@ -1,7 +1,5 @@
 # Arrizal Bintang Ramadhan | Personal Portfolio
 
-![Portfolio Preview](https://github.com/arrizalrahmat/porto/raw/main/public/preview.png)
-
 ## ✨ Overview
 
 A silly looking website made 80% with AI, the theme is about crayon drawing book.
@@ -19,7 +17,7 @@ A silly looking website made 80% with AI, the theme is about crayon drawing book
 
 ## 🔗 Links
 
-- [Live Site](https://arrizal.fun)
+- [Live Site](https://arrizal.tech)
 - [GitHub](https://github.com/arrizalbintangr)
 - [LinkedIn](https://linkedin.com/in/arrizalbintangr)
 
