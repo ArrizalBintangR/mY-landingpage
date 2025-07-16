@@ -84,34 +84,33 @@ export function setupCloudAnimations(cloudRefs: HTMLElement[]) {
 
     console.log(`Creating transition between ${currentSection.id} and ${nextSection.id}`);
 
-    // Create a direct animation timeline for this transition
-    const tl = gsap.timeline({
-      scrollTrigger: {
-        id: `transition-${currentSection.id}-to-${nextSection.id}`,
-        trigger: currentSection,
-        start: "bottom bottom+=100", // Start earlier
-        end: "bottom top-=100", // End later
-        scrub: 1.5, // Faster response
-        onEnter: () => console.log(`Entering transition from ${currentSection.id} to ${nextSection.id}`),
-        onLeaveBack: () => console.log(`Leaving transition from ${currentSection.id} to ${nextSection.id} (back)`)
-      }
+    // Create a ScrollTrigger for direct position updates
+    ScrollTrigger.create({
+      id: `transition-${currentSection.id}-to-${nextSection.id}`,
+      trigger: currentSection,
+      start: "bottom bottom", 
+      end: "bottom top",
+      onUpdate: (self) => {
+        const progress = self.progress;
+        const fullScreenHeight = window.innerHeight + cloud.offsetHeight;
+        
+        // Direct position calculation based on scroll progress
+        const yPosition = fullScreenHeight - (progress * fullScreenHeight * 2);
+        // Increased opacity range: starts at 0.7, peaks at 1.0
+        const opacity = 0.7 + (progress * 0.3);
+        
+        // Apply transform directly without GSAP animation
+        gsap.set(cloud, {
+          y: yPosition,
+          opacity: Math.min(opacity, 1.0), // Allow full opacity
+          immediateRender: true,
+          force3D: true
+        });
+      },
+      onEnter: () => console.log(`Entering transition from ${currentSection.id} to ${nextSection.id}`),
+      onLeaveBack: () => console.log(`Leaving transition from ${currentSection.id} to ${nextSection.id} (back)`)
     });
-
-    // Add animation keyframes to timeline
-    const fullScreenHeight = window.innerHeight + cloud.offsetHeight;
-
-    // First half: coming into view
-    tl.fromTo(cloud,
-      { y: fullScreenHeight, opacity: 0.5 },
-      { y: 0, opacity: 0.9, duration: 0.5, ease: "none" }
-    );
-
-    // Second half: leaving view
-    tl.to(cloud,
-      { y: -fullScreenHeight, opacity: 3, duration: 0.5, ease: "none" }
-    );
   }
-
 
   return () => {
     // Clean up all ScrollTriggers when component unmounts
@@ -122,6 +121,8 @@ export function setupCloudAnimations(cloudRefs: HTMLElement[]) {
 export function setupSectionDetection(updateActiveSection: (sectionId: string) => void) {
   if (typeof window === 'undefined') return;
 
+  console.log('Setting up section detection...');
+
   // Clean up any existing section detection ScrollTriggers
   ScrollTrigger.getAll().forEach(trigger => {
     if (trigger.vars.id && trigger.vars.id.startsWith('section-detection')) {
@@ -130,50 +131,77 @@ export function setupSectionDetection(updateActiveSection: (sectionId: string) =
   });
 
   const sections = document.querySelectorAll('.section');
+  console.log(`Found ${sections.length} sections:`, Array.from(sections).map(s => s.id));
   
-  // Set initial section based on URL hash or default to first section
-  if (window.location.hash) {
-    const initialSection = window.location.hash.substring(1);
-    const sectionExists = Array.from(sections).some(section => section.id === initialSection);
+  // Set initial section based on scroll position
+  const setInitialSection = () => {
+    const scrollY = window.scrollY;
+    let currentSection = sections[0]?.id || 'home';
     
-    if (sectionExists) {
-      updateActiveSection(initialSection);
-    }
-  } else if (sections.length > 0) {
-    updateActiveSection(sections[0].id);
-  }
+    sections.forEach((section) => {
+      const rect = section.getBoundingClientRect();
+      const sectionTop = rect.top + scrollY;
+      const sectionMiddle = sectionTop + rect.height / 2;
+      
+      if (scrollY + window.innerHeight / 2 >= sectionMiddle) {
+        currentSection = section.id;
+      }
+    });
+    
+    console.log(`Initial section based on scroll position: ${currentSection}`);
+    updateActiveSection(currentSection);
+  };
 
-  // Create ScrollTriggers for each section
+  // Set initial section
+  setInitialSection();
+
+  // Create ScrollTriggers for each section with better configuration
   sections.forEach((section) => {
-    ScrollTrigger.create({
+    const trigger = ScrollTrigger.create({
       id: `section-detection-${section.id}`,
       trigger: section as Element,
-      start: 'top 60%',
-      end: 'bottom 40%',
-      onEnter: () => {
-        console.log(`Scrolled into section: ${section.id}`);
-        updateActiveSection(section.id);
-        
-        // Update URL without triggering scroll
-        if (history.pushState && window.location.hash !== `#${section.id}`) {
-          history.pushState(null, '', `#${section.id}`);
+      start: 'top 50%',  // Section becomes active when its top reaches viewport center
+      end: 'bottom 50%', // Section stays active until its bottom leaves viewport center
+      onToggle: (self) => {
+        // Only update if entering the trigger area
+        if (self.isActive) {
+          console.log(`Section ${section.id} is now active (direction: ${self.direction})`);
+          updateActiveSection(section.id);
+          
+          // Update URL without triggering scroll
+          if (history.pushState && window.location.hash !== `#${section.id}`) {
+            history.pushState(null, '', `#${section.id}`);
+          }
         }
       },
-      onEnterBack: () => {
-        console.log(`Scrolled back into section: ${section.id}`);
-        updateActiveSection(section.id);
-        
-        // Update URL without triggering scroll
-        if (history.pushState && window.location.hash !== `#${section.id}`) {
-          history.pushState(null, '', `#${section.id}`);
-        }
-      },
-      markers: false
+      markers: false, // Set to true temporarily for debugging if needed
+      refreshPriority: 1
+    });
+    
+    console.log(`Created ScrollTrigger for section ${section.id}`, {
+      start: trigger.start,
+      end: trigger.end
     });
   });
 
+  // Refresh ScrollTrigger after a short delay to ensure proper positioning
+  setTimeout(() => {
+    console.log('Refreshing ScrollTrigger...');
+    ScrollTrigger.refresh();
+    
+    // Double-check the current section after refresh
+    setInitialSection();
+  }, 200);
+
+  // Also refresh on window resize
+  const handleResize = () => {
+    ScrollTrigger.refresh();
+  };
+  window.addEventListener('resize', handleResize);
+
   // Return cleanup function
   return () => {
+    window.removeEventListener('resize', handleResize);
     ScrollTrigger.getAll().forEach(trigger => {
       if (trigger.vars.id && trigger.vars.id.startsWith('section-detection')) {
         trigger.kill();

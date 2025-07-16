@@ -22,6 +22,8 @@
 
 .footer-text {
   font-family: "PastelCrayon", sans-serif;
+  color: #f6f4f1;
+  opacity: 75%;
 }
 
 .font-explanation {
@@ -432,4 +434,18 @@ body {
   color: var(--foreground);
   background: var(--background);
   font-family: Arial, Helvetica, sans-serif;
+}
+
+/* Hide scrollbar but keep scroll functionality */
+html, body {
+  scrollbar-width: none; /* Firefox */
+  -ms-overflow-style: none; /* IE 10+ */
+}
+
+html::-webkit-scrollbar, body::-webkit-scrollbar {
+  display: none; /* Chrome, Safari, Opera */
+}
+
+* {
+  cursor: url('../../public/cursor.webp'), auto;
 }

@@ -14,6 +14,7 @@ const LoadingScreen = ({ onComplete }) => {
     // Array of image paths to preload - add all important images from your site
     const imagesToPreload = [
       '/cloudbox.png',
+      '/black-crayon-drawing.jpg',
       '/sun.webp',
       '/ray.webp',
       '/cloud3.webp',

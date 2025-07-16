@@ -68,9 +68,14 @@ export default function Home() {
 
   useEffect(() => {
     setMounted(true);
+  }, []);
 
-    // Set up section detection after assets are loaded
-    if (typeof window !== 'undefined' && assetsLoaded) {
+  // Separate effect for section detection that waits for everything to be ready
+  useEffect(() => {
+    if (!mounted || !assetsLoaded || typeof window === 'undefined') return;
+
+    // Add a delay to ensure DOM is fully rendered and measured
+    const setupTimer = setTimeout(() => {
       // Clean up any existing ScrollTriggers
       ScrollTrigger.getAll().forEach(trigger => {
         if (trigger.vars.id && trigger.vars.id.startsWith('section-detection')) {
@@ -94,7 +99,11 @@ export default function Home() {
       });
 
       return cleanup;
-    }
+    }, 1000); // Increased delay to ensure everything is ready
+
+    return () => {
+      clearTimeout(setupTimer);
+    };
   }, [mounted, assetsLoaded]);
 
   // Prevent scrolling during loading

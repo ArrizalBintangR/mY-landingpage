@@ -11,7 +11,7 @@ export default function mainPage() {
   return (
     <div className="relative flex flex-col items-center justify-center h-screen text-center text-gray-800 z-10">
 
-      <div className="absolute w-[25vw] h-[25vw] md:w-[30vw] md:h-[30vw] left-[-6%] top-[-3%] z-10">
+      <div className="absolute w-[45vw] h-[45vw] md:w-[30vw] md:h-[30vw] left-[-6%] top-[-3%] z-10">
         <Image
           src={sun}
           alt="Sun"
@@ -41,14 +41,16 @@ export default function mainPage() {
         {wrapText("Hi, I'm")}
       </h2>
       <h1 className="text-3xl md:text-5xl font-bold font-main">
-        {wrapText("Arrizal Bintang Ramadhan")}
+        <span className="block md:inline">{wrapText("Arrizal")}</span>{" "}
+        <span className="block md:inline">{wrapText("Bintang")}</span>{" "}
+        <span className="block md:inline">{wrapText("Ramadhan")}</span>
       </h1>
       <h3 className="text-lg md:text-3xl font-main">
         {wrapText("A Proud Software Engineer")}
       </h3>
 
       {/* Plane Animation */}
-      <div className="absolute left-4 md:left-8 w-[20vw] md:w-[10vw] h-[20vw] md:h-[10vw] animate-stutter-fly"
+      <div className="absolute left-4 md:left-8 w-[25vw] md:w-[10vw] h-[25vw] md:h-[10vw] animate-stutter-fly"
         style={{ top: 'calc(50% + 6rem)' }}>  {/* Position relative to center + offset to place below text */}
         <Image
           src={plane}

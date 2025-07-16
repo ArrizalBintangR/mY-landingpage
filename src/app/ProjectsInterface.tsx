@@ -28,7 +28,7 @@ export default function Projects() {
       <div className="relative z-1 w-full flex-grow flex flex-col items-center">
         <div className="w-full p-8 flex flex-col items-center">
           {/* Heading */}
-          <h2 className="text-4xl font-bold mb-8 headline">{wrapText("Projects I've been on :D")}</h2>
+          <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold mb-4 headline">{wrapText("Projects I've been on :D")}</h2>
 
           {/* Projects Grid */}
           <div className="flex flex-wrap justify-center gap-32 w-full max-w-7xl">
@@ -137,7 +137,7 @@ export default function Projects() {
               style={{ mixBlendMode: "darken", objectFit: "cover" }}
               className="absolute w-full h-96 opacity-25"
             />
-            <div className="text-xl font-explanation text-black flex items-center">
+            <div className="text-xl max-sm:text-sm font-explanation text-black flex items-center">
               <p className="mt-2">{wrapText("MORE PROJECTS ON ")}</p>
               <Image src={githubsmaller} alt="GitHub logo" width={32} height={32} />
             </div>
@@ -151,40 +151,36 @@ export default function Projects() {
       {/* Footer Section - Now full width */}
       <div className="w-full relative z-2">
         {/* Decorative elements container */}
-        <div className="relative w-full h-[150px]">
+        <div className="relative w-full h-[100px] sm:h-[150px]">
           <Image
             src={trees}
             alt="Trees image"
-            className="absolute bottom-[-4.2vh] left-0 w-41 max-w-[250px] h-41 max-h-[250px] z-20"
+            className="absolute bottom-[-45px] max-md:bottom-[-3vh] max-sm:bottom-[-8vh] max-sm:left-[-5vh] left-0 w-[150px] h-[150px] sm:w-[200px] sm:h-[200px] md:w-[230px] md:h-[230px] z-20 transform scale-75 sm:scale-100"
             loading="lazy"
           />
           <Image
             src={grass}
             alt="Bush steps"
-            className="absolute bottom-[-4vh] left-[23vw] w-[300px] h-[150px] z-20"
+            className="absolute bottom-[-4vh] max-sm:bottom-[-6.66vh] max-sm:left-[8vh] left-[23vw] w-[200px] h-[100px] sm:w-[250px] sm:h-[125px] md:w-[300px] md:h-[150px] z-20 transform scale-75 sm:scale-100"
             loading="lazy"
-
           />
           <Image
             src={flower1}
             alt="mixed flowers 1"
-            className="absolute bottom-[-3vh] left-[50vw] w-[100px] h-[50px] z-20"
+            className="absolute bottom-[-3vh] left-[50vw] w-[60px] h-[30px] sm:w-[80px] sm:h-[40px] md:w-[100px] md:h-[50px] z-20 transform scale-75 sm:scale-100"
             loading="lazy"
-
           />
           <Image
             src={flower2}
             alt="mixed flowers 2"
-            className="absolute bottom-[-4vh] left-[60vw] w-[100px] h-[45px] z-20"
+            className="absolute bottom-[-4vh] max-sm:bottom-[-5vh] left-[60vw] max-sm:left-[65vw] w-[60px] h-[27px] sm:w-[80px] sm:h-[36px] md:w-[100px] md:h-[45px] z-20 transform scale-75 sm:scale-100"
             loading="lazy"
-
           />
           <Image
             src={logs}
             alt="A log."
-            className="absolute bottom-[-4vh] left-[80vw] w-[150px] h-[80px] z-20"
+            className="absolute bottom-[-3.5vh] max-sm:bottom-[-5vh] left-[85vw] max-sm:left-[79vw] w-[90px] h-[48px] sm:w-[120px] sm:h-[64px] md:w-[150px] md:h-[80px] z-20 transform scale-75 sm:scale-100"
             loading="lazy"
-
           />
         </div>
 
@@ -256,9 +252,9 @@ export default function Projects() {
               <a href="#about" className="hover:underline footer-text">about</a> |
               <a href="#techstacks" className="hover:underline footer-text"> tech stack</a> |
               <a href="#projects" className="hover:underline footer-text"> projects</a> |
-              <a href="/cv.pdf" className="hover:underline footer-text"> download cv</a>
+              <a href="/cv.pdf" download className="hover:underline footer-text"> download cv</a>
             </div>
-            <p className="relative z-10 text-sm footer-text text-center">Arrizal Bintang Ramadhan</p>
+            <p className="relative z-10 text-sm footer-text text-center">Made With ♥ by<br/>Arrizal Bintang Ramadhan</p>
           </div>
         </footer>
       </div>

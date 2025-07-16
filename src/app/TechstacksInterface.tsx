@@ -46,25 +46,29 @@ export default function TechStack() {
 
   return (
     <div className="relative flex flex-col items-center justify-center text-center text-gray-800 h-screen z-10 p-8 overflow-hidden">
-      <h2 className="text-3xl font-bold mb-8 headline">{wrapText("My Tech Stacks")}</h2>
+      <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold mb-4 headline">{wrapText("My Tech Stacks")}</h2>
       {/* First Cloud - Sticks to Left Bezel, Moved Nearer */}
       <Image
         src={cloud2}
         alt="Clouds"
-        className="absolute top-[34vh] w-96 h-96 object-cover z-20 -rotate-90 sm:left-[calc(50%-32rem-10rem)] left-[calc(50%-32rem-6rem)]"
+        className="absolute top-1/2 max-sm:top-[52%] max-sm:max-w-64 max-sm:h-64 max-sm:left-[-12%] -translate-y-[calc(50%-1rem)] object-cover z-20 -rotate-90 sm:left-[calc(50%-32rem-10rem)] left-[calc(50%-32rem-6rem)]"
         priority={true}
+        width={400}
+        height={400}
       />
 
       {/* Second Cloud - Sticks to Right Bezel, Moved Nearer */}
       <Image
         src={cloud2}
         alt="Clouds"
-        className="absolute top-[32vh] w-96 h-96 object-cover z-20 rotate-90 sm:right-[calc(50%-32rem-10rem)] right-[calc(50%-32rem-6rem)]"
+        className="absolute top-1/2 max-sm:top-[52%] max-sm:w-64 max-sm:h-64 max-sm:right-[-11%] -translate-y-1/2 object-cover z-20 rotate-90 sm:right-[calc(50%-32rem-10rem)] right-[calc(50%-32rem-6rem)]"
         priority={true}
+        width={400}
+        height={400}
       />
 
       {/* Single Carousel Container */}
-      <div className="relative w-full max-w-4xl bg-white p-6 rounded-xl shadow-md overflow-hidden">
+      <div className="relative w-full max-w-4xl bg-white p-6 rounded-xl shadow-md overflow-hidden max-sm:max-w-[50vw] max-sm:p-4">
         {/* Background - Behind Both Marquees */}
         <Background className="absolute inset-0 w-full h-full opacity-10 z-0 object-cover" />
 
@@ -78,12 +82,12 @@ export default function TechStack() {
           {techStackAssets.slice(0, 7).map((asset, index) => (
             <div
               key={index}
-              className={`mx-8 w-28 h-28 flex items-center justify-center overflow-hidden ${index % 2 === 0 ? "img-wiggle-left-right" : "img-wiggle-right-left"
+              className={`mx-8 w-28 h-28 max-sm:w-20 max-sm:h-20 flex items-center justify-center overflow-hidden ${index % 2 === 0 ? "img-wiggle-left-right" : "img-wiggle-right-left"
                 }`}
               onMouseEnter={() => setIsHovered(true)}
               onMouseLeave={() => setIsHovered(false)}
             >
-              <Image src={asset.src} alt={asset.alt} loading="lazy" width={96} height={96} className="w-24 h-24 object-contain" />
+              <Image src={asset.src} alt={asset.alt} loading="lazy" width={96} height={96} className="w-24 h-24 max-sm:w-20 max-sm:h-20 object-contain" />
             </div>
           ))}
         </Marquee>
@@ -99,12 +103,12 @@ export default function TechStack() {
           {techStackAssets.slice(7).map((asset, index) => (
             <div
               key={index}
-              className={`mx-8 w-28 h-28 flex items-center justify-center overflow-hidden ${index % 2 === 0 ? "img-wiggle-left-right" : "img-wiggle-right-left"
+              className={`mx-8 w-28 h-28 max-sm:w-20 max-sm:h-20 flex items-center justify-center overflow-hidden ${index % 2 === 0 ? "img-wiggle-left-right" : "img-wiggle-right-left"
                 }`}
               onMouseEnter={() => setIsHovered(true)}
               onMouseLeave={() => setIsHovered(false)}
             >
-              <Image src={asset.src} alt={asset.alt} loading="lazy" width={96} height={96} className="w-32 h-32 object-contain" />
+              <Image src={asset.src} alt={asset.alt} loading="lazy" width={96} height={96} className="w-28 h-28 max-sm:w-20 max-sm:h-20 object-contain" />
             </div>
           ))}
         </Marquee>

@@ -62,9 +62,9 @@ const HoverNavbar = () => {
       navCloud.className = 'absolute';
       navCloud.id = 'navbar-cloud';
 
-      // Size to cover the entire screen
-      const width = Math.max(window.innerWidth * 3.0, 2000);
-      const height = Math.max(window.innerHeight * 3.0, 2000);
+      // Size to cover the entire screen with extra margin
+      const width = Math.max(window.innerWidth * 4.0, 3000);
+      const height = Math.max(window.innerHeight * 4.0, 3000);
 
       // Create cloud image
       const cloudImg = document.createElement('img');
@@ -72,10 +72,12 @@ const HoverNavbar = () => {
       cloudImg.alt = 'Cloud';
       cloudImg.className = 'w-full h-full object-contain';
 
-      // Position the cloud
+      // Position the cloud centered - match the animation's initial state
       navCloud.style.width = `${width}px`;
       navCloud.style.height = `${height}px`;
       navCloud.style.left = `${(window.innerWidth - width) / 2}px`;
+      navCloud.style.top = '-55%';  // Match the timeline.set top value
+      navCloud.style.transform = 'translateY(-50%)';
       navCloud.style.display = 'none'; // Initially hidden
       navCloud.style.zIndex = '99999';
 
@@ -120,36 +122,24 @@ const HoverNavbar = () => {
       }, 0);
     }
 
-    // Reset cloud position and make it visible
+    // Reset cloud position and make it visible - start completely below viewport
     timeline.set(navCloud, {
-      y: window.innerHeight * 1.2,
+      // top: 'translateY(-50%)',  // Negative top to compensate for the 25% gap
+      y: window.innerHeight * 2.5,
       opacity: 1,
-      display: 'block'
+      display: 'block',
+      transform: 'translateY(-50%)'
     });
 
-    // Animate cloud coming in from bottom
+    // Animate cloud coming in from bottom to cover entire screen
     timeline.to(navCloud, {
-      y: -100,
+      y: 0,
       opacity: 1,
       duration: 0.8,
       ease: "power2.out"
     });
 
-    // Hold briefly at center
-    timeline.to(navCloud, {
-      opacity: 1,
-      duration: 0.3
-    });
-
-    // Animate cloud leaving to top
-    timeline.to(navCloud, {
-      y: -window.innerHeight * 3.5,
-      opacity: 1,
-      duration: 0.6,
-      ease: "power2.in"
-    });
-
-    // Scroll to the section - this happens as the cloud is leaving
+    // Scroll to the section while the cloud is covering the screen
     timeline.to(window, {
       scrollTo: {
         y: targetSection,
@@ -157,10 +147,23 @@ const HoverNavbar = () => {
       },
       duration: 0.1,
       ease: "power1.inOut"
-    }, "-=0.01");
+    });
+
+    // Hold briefly at center after scrolling
+    timeline.to(navCloud, {
+      opacity: 1,
+      duration: 0.2
+    });
+
+    // Animate cloud leaving to top - ensure it goes completely off screen
+    timeline.to(navCloud, {
+      y: -window.innerHeight * 2.5,
+      opacity: 1,
+      duration: 0.6,
+      ease: "power2.in"
+    });
   };
 
-  // Add this to your component
   useEffect(() => {
     // Cleanup function to remove navbar cloud elements when component unmounts
     return () => {

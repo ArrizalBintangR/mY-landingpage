@@ -2,12 +2,12 @@
 
 ## ✨ Overview
 
-A silly looking website made 80% with AI, the theme is about crayon drawing book.
+A silly looking website made 60% with AI, the theme is about crayon drawing book. 
 
 ## 🌟 Features
 
 - **Interactive Elements** - Engaging animations and hover effects
-- **SILLY** - lmao website
+- **SILLY** - lmao website from temu
 
 ## 🛠️ Built With
 
